@@ -4,3 +4,5 @@ vendor
 composer.phar
 .DS_Store
 .svn
+Hydrators
+Proxies

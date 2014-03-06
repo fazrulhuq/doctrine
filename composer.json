@@ -1,0 +1,14 @@
+{
+    "name": "assistanz/mongo",
+    "description": "Description of project mongo.",
+    "authors": [
+        {
+            "name": "Fazrul",
+            "email": "fazrul@assistanz.com"
+        }
+    ],
+    "require": {
+        "silex/silex": "~1.1",
+        "doctrine/mongodb-odm": "1.0.*@dev"
+    }
+}
