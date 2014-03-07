@@ -63,6 +63,8 @@ $app->get('/instagram/listener/', function () use ($app) {
         return $challenge;
     }
     
+    
+    
     return $name;
 });
 
