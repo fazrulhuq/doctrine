@@ -55,18 +55,18 @@ $app->get('/api/geo/find/ip/{ip}', function ($ip) use ($app, $dm) {
     return count($locations) > 0 ? $app->json($locations[0]->toArray()) : $app->json(array('-'));
 });
 
-$app->get('/instagram/listener/', function () use ($app) {
-    $mode = $app['request']->get('hub.mode');
-    $challenge = $app['request']->get('hub.challenge');
-    
-    if ($mode === "subscribe" && $challenge) {
-        return $challenge;
-    }
-    
-    
-    
-    return $name;
-});
+//$app->get('/instagram/listener/', function () use ($app) {
+//    $mode = $app['request']->get('hub.mode');
+//    $challenge = $app['request']->get('hub.challenge');
+//    
+//    if ($mode === "subscribe" && $challenge) {
+//        return $challenge;
+//    }
+//    
+//    
+//    
+//    return $name;
+//});
 
 $app->run();
 
