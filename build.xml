@@ -33,6 +33,13 @@
             </fileset>
         </copy>
         
+        <copy todir="${build}/config">
+            <fileset dir="${basedir}/config">
+                <exclude name="**/.svn"/>
+                <exclude name="**/.git"/>
+            </fileset>
+        </copy>
+        
         <mkdir dir="${build}/Proxies" />
         <mkdir dir="${build}/Hydrators" />
     
