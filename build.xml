@@ -1,0 +1,139 @@
+<project name="IPFinder" default="build" basedir=".">
+    <description>
+        IP to Location Database lookup application
+    </description>
+    <!-- set global properties for this build -->
+    <property environment="env"/>
+    <property name="src" location="src"/>
+    <property name="build" location="build"/>
+    <property name="dist"  location="dist"/>
+    
+    <target name="clean"
+            description="clean up" >
+        <!-- Delete the ${build} and ${dist} directory trees -->
+        <delete dir="${build}"/>
+        <delete dir="${dist}"/>
+    </target>    
+
+    <target name="init" depends="clean">
+        <!-- Create the time stamp -->
+        <tstamp/>
+        <!-- Create the build directory structure used by compile -->
+        <mkdir dir="${build}"/>
+        <mkdir dir="${dist}"/>
+    </target>
+
+    <target name="build" depends="init, composer.update"
+            description="build the source " >
+    
+        <copy todir="${build}/Documents">
+            <fileset dir="${basedir}/Documents">
+                <exclude name="**/.svn"/>
+                <exclude name="**/.git"/>
+            </fileset>
+        </copy>
+        
+        <mkdir dir="${build}/Proxies" />
+        <mkdir dir="${build}/Hydrators" />
+    
+        <copy todir="${build}/public">
+            <fileset dir="${basedir}/public">
+                <exclude name="**/.svn"/>
+                <exclude name="**/.git"/>
+            </fileset>
+        </copy>
+        
+        <copy todir="${build}/vendor">
+            <fileset dir="${basedir}/vendor">
+                <exclude name="**/.svn"/>
+                <exclude name="**/.git"/>
+            </fileset>
+        </copy>
+    
+        <!-- Set permission for the proxies and fcgi files -->
+        <chmod file="${build}/Proxies" perm="777"/>
+        <chmod file="${build}/Hydrators" perm="777"/>
+<!--        <chmod file="${build}/public/cgi-bin/php.fcgi" perm="755"/>-->
+    
+        <propertyfile file="${build}/public/build-info.txt"  comment="Build Information">
+            <entry  key="build.number" value="${env.BUILD_NUMBER}"/>
+            <entry  key="build.id" value="${env.BUILD_ID}"/>
+            <entry  key="svn.revision" value="${env.SVN_REVISION}" />
+        </propertyfile>
+    
+    </target>
+
+    <target name="dist" depends="build"
+            description="generate the distribution" >
+        <!-- Create the distribution directory -->
+        <tar destfile="${dist}/ipfinder.tar" basedir="${basedir}/build"/>
+        <gzip destfile="${dist}/ipfinder.tar.gz" src="${dist}/ipfinder.tar"/>
+    </target>
+  
+  
+    <target name="dependencies-pull" description="Perform syntax check of sourcecode files">
+        <apply executable="wget" failonerror="true">
+            <arg value="https://getcomposer.org/composer.phar" />
+        </apply>
+        
+        <apply executable="php" failonerror="true">
+            <arg value="composer.phar" />
+            <arg value="install" />
+        </apply>
+        
+        <apply executable="php" failonerror="true">
+            <arg value="composer.phar" />
+            <arg value="update" />
+        </apply>
+    </target>
+    
+    <target name="set-permissions">
+        <mkdir dir="${build}/Proxies" />
+        <chmod file="${build}/ipfinder" perm="777"/>
+    </target>
+    
+    <target name="composer.selfupdate" depends="composer.install" if="composer.available" description="Updates composer lib">
+        <exec executable="php">
+            <arg value="composer.phar" />
+            <arg value="selfupdate" />
+        </exec>
+    </target>
+    
+    <target name="composer.exists">
+        <available file="composer.phar" property="composer.available"/>
+        <available file="composer.lock" property="composer.installed"/>
+    </target>
+    
+    <target name="composer.download" depends="composer.exists" unless="composer.available">
+        <get src="https://getcomposer.org/composer.phar" dest="composer.phar"/>
+        <available file="composer.phar" property="composer.available"/>
+    </target>
+
+    <target name="composer.install" depends="composer.download" unless="composer.installed">
+        <exec executable="php">
+            <arg value="composer.phar" />
+            <arg value="install" />
+        </exec>
+        
+        <exec executable="bower" failonerror="true">
+            <arg value="install" />
+        </exec>
+        <available file="composer.lock" property="composer.installed"/>
+    </target>
+
+    <target name="composer.update" description="Builds composer dependencies" depends="composer.selfupdate" if="composer.installed">
+        <exec executable="php">
+            <arg value="composer.phar" />
+            <arg value="update" />
+        </exec>
+      
+        <exec executable="bower" failonerror="true">
+            <arg value="install" />
+        </exec>
+        
+        <exec executable="bower" failonerror="true">
+            <arg value="update" />
+        </exec>
+    </target>
+
+</project>
