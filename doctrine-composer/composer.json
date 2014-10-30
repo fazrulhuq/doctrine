@@ -1,0 +1,13 @@
+{
+    "name": "assistanz/doctrine-composer",
+    "description": "Description of project doctrine-composer.",
+    "authors": [
+        {
+            "name": "Fazrul Huq",
+            "email": "fazrul@assistanz.com"
+        }
+    ],
+    "require": {
+        "doctrine/orm": "*"
+    }
+}
